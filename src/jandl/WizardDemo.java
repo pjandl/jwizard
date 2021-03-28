@@ -1,55 +1,69 @@
 package jandl;
 
-import java.io.FileReader;
+import java.util.Arrays;
 
 import javax.swing.SwingUtilities;
 
 import jandl.wizard.Data;
 import jandl.wizard.WizardBase;
-import jandl.wizard.WizardField;
+import jandl.wizard.WizardFactory;
 import jandl.wizard.WizardText;
 
 public class WizardDemo {
 	public static void main(String[] args) throws Exception {
 		// Primeira janela
-		WizardBase wb1 = new WizardBase("Wiz 01");
+		WizardBase wb1 = WizardFactory.createBase("Pagina 01");
 		// Segunda janela
-		WizardText wb2 = new WizardText("Wiz 02");
-		wb2.setImage("./images/tux-darth-maul.png");
-		wb2.loadTextFrom(new FileReader("habilidades.txt"));
-		wb2.addPostProcessor((obj) -> wb2PostProcessor(obj));
+		WizardBase wb2 = WizardFactory.createText("Pagina 02", "loren-ipsun.txt");
+		wb2.setImage("C:/Users/pjand/Pictures/bulb-crossed-by-pencil.png");
+		// wb2.setImage("/Users/Jandl/Pictures/independence-day.jpg");
+		//wb2.setImage("./images/tux-darth-maul.png");
+		wb2.addPostProcessor((wiz) -> wb2PostProcessor(wiz));
 		// terceira janela
-		String[] tag = { "Latitude", "Longitude", "Lat", "Long", 
-				"Lalala", "Lololo", "Latitude2", "Longitude2", "Latitude3", "Longitude4" };
-		WizardField wb3 = new WizardField("Wiz 03", tag, tag);
+		String[] tag = { "X1", "Y1", "X2", "Y2"};
+		String[] label = { "Ponto 1, coordenada x", "Ponto 1, coordenada y", 
+				"Ponto 2, coordenada x", "Ponto 2, coordenada y"};
+		WizardBase wb3 = WizardFactory.createField("Pagina 03", tag, label, label);
 		wb3.setImage("./images/tux-luke-skywalker.png");
-		wb3.addPostProcessor((obj) -> wb3PostProcessor(obj));
+		wb3.addPostProcessor((wiz) -> wb3PostProcessor(wiz));
 		// Quarta janela
-		WizardText wb4 = new WizardText("Wiz 04", null, "./images/tux-darth-vader.png");
-		wb4.addPreProcessor((obj) -> wb4PreProcessor(wb4));
+		String[] opcoes = {"Sim", "Talvez", "Nao"};
+		WizardBase wb4 = WizardFactory.createList("Pagina 04", "opt", "Opcoes", opcoes);
+		// Quinta janela
+		WizardBase wb5 = WizardFactory.createText("Pagina 05",  "./images/tux-darth-vader.png", true);
+		wb5.addPreProcessor((obj) -> wb4PreProcessor(wb5));
 		// Encadeamento
 		wb1.nextWizard(wb2);
 		wb2.nextWizard(wb3);
 		wb3.nextWizard(wb4);
-		// Acionamento da aplicação
+		wb4.nextWizard(wb5);
+		// Acionamento da aplicacao
 		SwingUtilities.invokeLater(() -> wb1.setVisible(true));
 	}
 
-	public static void wb2PostProcessor(Object obj) {
-		System.out.println("wb2PostProcessor");
+	public static void wb2PostProcessor(WizardBase wizard) {
+		System.out.println("wb2PostProcessor for " + wizard.getName());
 	}
-	public static void wb3PostProcessor(Object obj) {
+	
+	public static void wb3PostProcessor(WizardBase wizard) {
 		System.out.println("wb3PostProcessor");
 		Data data = Data.instance();
-		int latitude = Integer.parseInt((String)data.get("Wizard3.Latitude"));
-		int longitude = Integer.parseInt((String)data.get("Wizard3.Longitude"));
-		data.put("TW.total", latitude * longitude);
+		double x1 = data.getAsDouble("Wizard3.X1");
+		double y1 = data.getAsDouble("Wizard3.Y1");
+		double x2 = data.getAsDouble("Wizard3.X2");
+		double y2 = data.getAsDouble("Wizard3.Y2");
+		double distancia = Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+		data.put("distancia", distancia);
 		System.out.println(data);
 	}
-	public static void wb4PreProcessor(Object obj) {
+	
+	public static void wb4PreProcessor(WizardBase wizard) {
 		System.out.println("wb4PreProcessor");
-		WizardText wizard = (WizardText)obj;
-		wizard.setText(Data.instance().toString());
-		wizard.addText("\n\nTW.total = " + Data.instance().get("TW.total"));
+		WizardText wizardText = (WizardText)wizard;
+		wizardText.setText(Data.instance().toString());
+		wizardText.append("\n\nDistancia = " + Data.instance().get("distancia"));
+		int[] index = (int[]) Data.instance().get("Wizard4.opt.indices");
+		wizardText.append("\n\nIndices = " + Arrays.toString(index));
+		wizardText.append("\n\nSelecao = " + Data.instance().get("Wizard4.opt.selectedValues"));
 	}
 }
