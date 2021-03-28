@@ -8,31 +8,31 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import jandl.wizard.pane.FieldPane;
+import jandl.wizard.pane.ListPane;
 
-public class WizardField extends WizardBase {
+public class WizardList extends WizardBase {
 	/**
 	 * serialVersionUID = YYYYMMDDv
 	 */
 	public static final long serialVersionUID = WizardBase.serialVersionUID;
 
-	private FieldPane fieldPane;
+	private ListPane<?> listPane;
 
-	public WizardField( String[] tag, String[] desc){
-		this("WizardField", null, tag, desc, null);
+	public WizardList(String tag, String label, Object[] list){
+		this("WizardList", null, tag, label, list);
 	}
 
-	public WizardField(String title, String[] tag, String[] desc){
-		this(title, null, tag, desc, null);
+	public WizardList(String title, String tag, String label, Object[] list){
+		this(title, null, tag, label, list);
 	}
 
-	public WizardField(String title, String imageFile, String[] tag, String[] label, String[] tip){
+	public <T> WizardList(String title, String imageFile, String tag, String label, T[] list){
 		super(title, imageFile);
-		System.out.println("WizardField.<init>(" + title + ")");
-		fieldPane = new FieldPane(tag, label, tip);
+		System.out.println("WizardList.<init>(" + title + ")");
+		listPane = new ListPane<T>(tag, label, list);
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-		panel.add(fieldPane);
+		panel.add(listPane);
 		panel.add(Box.createVerticalGlue());
 		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setBorder(BorderFactory.createCompoundBorder(
@@ -44,11 +44,12 @@ public class WizardField extends WizardBase {
 	protected void bNextClick(ActionEvent evt) {
 		System.out.println("@Override");
 		Data data = Data.instance();
-		for(int i = 0; i < fieldPane.fieldCount(); i++) {
-			String key = this.getName() + "." + fieldPane.getTag(i);
-			String value =  fieldPane.getField(i);
-			data.put(key, value);
-		}
+		String key1 = this.getName() + "." + listPane.getTag() + ".indices" ;
+		int[] index = listPane.getSelectedIndices();
+		data.put(key1, index);
+		String key2 = this.getName() + "." + listPane.getTag() + ".selectedValues" ;
+		String value =  listPane.getSelectedValuesList().toString();
+		data.put(key2, value);
 		super.bNextClick(evt);
 	}
 

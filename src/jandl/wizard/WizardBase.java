@@ -1,11 +1,15 @@
 package jandl.wizard;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -16,46 +20,60 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class WizardBase extends JFrame {
 	/**
 	 * serialVersionUID = YYYYMMDDv
 	 */
-	private static final long serialVersionUID = 202103210L;
+	public static final long serialVersionUID = 202103260L;
 	/**
 	* autonumbering
 	*/
 	private static int wizardNumber = 0;
+	public static long version;
 
 	private JLabel lImage;
 	private JButton bBack, bNext;
 	private WizardBase backWizard, nextWizard;
 	private boolean end;
-	private ArrayList<Consumer<Object>> preProcessorList;
-	private ArrayList<Consumer<Object>> postProcessorList;
+	private ArrayList<Consumer<WizardBase>> preProcessorList;
+	private ArrayList<Consumer<WizardBase>> postProcessorList;
 	
 	public WizardBase(){
-		this("The Wizard Base");
+		this("WizardBase", null, false);
 	}
 
 	public WizardBase(String title){
-		this(title, "/resources/wizard-base.png");
+		this(title, null, false);
+	}
+	
+	public WizardBase(String title, String imageFile){
+		this(title, imageFile, false);
 	}
 
-	public WizardBase(String title, String imageFile){
+	public WizardBase(String title, String imageFile, boolean fill){
 		super(title);
 		this.setName("Wizard" + (++wizardNumber));
 		System.out.println("WizardBase.<init>(" + title + "), " + this.getName());
 		// Lateral Image
-		URL url = this.getClass().getResource(imageFile);
-		if (url != null) {
+		if (imageFile == null) {
+			URL url = this.getClass().getResource("/resources/wizard-base.png");
 			lImage = new JLabel(new ImageIcon(url));
 		} else {
 			lImage = new JLabel(new ImageIcon(imageFile));
 		}
-		lImage.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createEmptyBorder(10, 10, 10, 0), BorderFactory.createEtchedBorder()));
-		add(lImage, "West");
+		JScrollPane sp = new JScrollPane(lImage);
+		if (fill) {
+			sp.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
+			add(sp, "Center");
+		} else {
+			sp.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(10, 10, 10, 0), BorderFactory.createEtchedBorder()));
+			sp.setPreferredSize(new Dimension(280, 440));
+			add(sp, "West");
+		}
 		// Botton Button Panel
 		JPanel bbp = new JPanel(new BorderLayout());
 		bbp.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -142,13 +160,13 @@ public class WizardBase extends JFrame {
 		bNextClick(null);
 	}
 
-	public void addPreProcessor(Consumer<Object> processor) {
+	public void addPreProcessor(Consumer<WizardBase> processor) {
 		if (processor != null) {
 			preProcessorList.add(processor);
 		}
 	}
 
-	public void addPostProcessor(Consumer<Object> processor) {
+	public void addPostProcessor(Consumer<WizardBase> processor) {
 		if (processor != null) {
 			postProcessorList.add(processor);
 		}
@@ -168,18 +186,21 @@ public class WizardBase extends JFrame {
 		} else {
 			System.out.println(this.getName() + ".bNextClick()");
 			try {
-				for (Consumer<Object> processor: this.postProcessorList) {
-					processor.accept(evt);
+				for (Consumer<WizardBase> processor: this.postProcessorList) {
+					// processor.accept(evt);
+					processor.accept(this);
 				}
-				for (Consumer<Object> processor: nextWizard.preProcessorList) {
-					processor.accept(evt);
+				for (Consumer<WizardBase> processor: nextWizard.preProcessorList) {
+					// processor.accept(evt);
+					processor.accept(this);
 				}
+				nextWizard.setLocation(this.getLocation());
+				nextWizard.setVisible(true);
+				this.setVisible(false);
 			} catch (Exception exc) {
 				System.out.println(this.getName() + ":\n" + exc.toString());
+				Toolkit.getDefaultToolkit().beep();
 			}
-			nextWizard.setLocation(this.getLocation());
-			nextWizard.setVisible(true);
-			this.setVisible(false);
 		}
 	}
 

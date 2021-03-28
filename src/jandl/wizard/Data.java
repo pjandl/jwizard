@@ -27,8 +27,21 @@ public class Data {
 		return table.get(key);
 	}
 
+	public Double getAsDouble(String key) {
+		return Double.valueOf((String)table.get(key));
+	}
+
+	public Integer getAsInteger(String key) {
+		return Integer.valueOf((String)table.get(key));
+	}
+
+	public String getAsString(String key) {
+		return (String)table.get(key);
+	}
+
 	public void put(String key, Object value) {
 		table.put(key, value);
+		System.out.println(key + "=" + value);
 	}
 
 	@Override

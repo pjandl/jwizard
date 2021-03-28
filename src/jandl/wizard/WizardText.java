@@ -1,66 +1,70 @@
 package jandl.wizard;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 
 import javax.swing.BorderFactory;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
+
+import jandl.wizard.pane.TextPane;
 
 public class WizardText extends WizardBase {
 	/**
 	 * serialVersionUID = YYYYMMDDv
 	 */
-	private static final long serialVersionUID = 202103210L;
+	public static final long serialVersionUID = WizardBase.serialVersionUID;
 
-	private JTextArea taText;
+	private TextPane textPane;
 	
 	public WizardText(){
-		this("The Wizard with Text");
+		this("WizardText");
 	}
 
 	public WizardText(String title){
-		this(title, null, "./res/wizard-base.png");
+		this(title, null, true);
 	}
 
-	public WizardText(String title, Reader reader){
-		this(title, reader, "./res/wizard-base.png");
+	public WizardText(String title, String textFile){
+		this(title, null, textFile);
+	}
+	
+	public WizardText(String title, String imageFile, boolean empty){
+		super(title, imageFile, false);
+		init();
+	}
+	
+	public WizardText(String title, String imageFile, String textFile){
+		super(title, imageFile, false);
+		init();
+		textPane.loadTextFrom(textFile);
 	}
 
-	public WizardText(String title, Reader reader, String imageFile){
-		super(title, imageFile);
-		System.out.println("WizardText.<init>(" + title + ")");
-		taText = new JTextArea();
-		taText.setEditable(false);
-		taText.setLineWrap(true);
-		taText.setWrapStyleWord(true);
-		JScrollPane scrollPane = new JScrollPane(taText);
-		scrollPane.setBorder(BorderFactory.createCompoundBorder(
+	public WizardText(String title, String imageFile, Reader reader){
+		super(title, imageFile, false);
+		init();
+		textPane.loadTextFrom(reader);
+	}
+	
+	private void init() {
+		System.out.println("WizardText.<init>(" + this.getTitle() + ")");
+		textPane = new TextPane();
+		textPane.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
-		add(scrollPane, "Center");
-		loadTextFrom(reader);
+		add(textPane, "Center");
 	}
-
 
 	public void setText(String text) {
-		taText.setText(text);
+		textPane.getInternalJTextArea().setText(text);
 	}
-	public void addText(String text) {
-		taText.append(text);
+
+	public void append(String text) {
+		textPane.getInternalJTextArea().append(text);
 	}
+	
+	public void loadTextFrom(String textFile) {
+		textPane.loadTextFrom(textFile);
+	}
+
 	public void loadTextFrom(Reader reader) {
-		if (reader == null) return;
-		try (BufferedReader br = new BufferedReader(reader)) {
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = br.readLine())!=null) {
-				sb.append(line);
-				sb.append('\n');
-			}
-			this.setText(sb.toString());
-		} catch (IOException ioe) {
-			throw new RuntimeException(ioe);
-		}
+		textPane.loadTextFrom(reader);
 	}
+
 }
