@@ -5,14 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import jandl.wizard.Collector;
 import jandl.wizard.WizardBase;
 
-public class TextPane extends JScrollPane {
+public class TextPane extends BasePane {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
 	protected static final long serialVersionUID = WizardBase.serialVersionUID;
 	
@@ -23,7 +23,15 @@ public class TextPane extends JScrollPane {
 		taText.setEditable(false);
 		taText.setLineWrap(true);
 		taText.setWrapStyleWord(true);
-		this.setViewportView(taText);
+		add(taText);
+	}
+	
+	@Override
+	public void dumpOn(String tag, Collector collector) {
+		String key = String.format("%s.%s.%s", 
+				tag, this.getName(), "text");
+		String value =  taText.getText().substring(0, 10) + "...";
+		collector.put(key, value);
 	}
 	
 	public JTextArea getInternalJTextArea() {

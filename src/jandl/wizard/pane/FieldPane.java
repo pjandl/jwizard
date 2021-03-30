@@ -3,14 +3,14 @@ package jandl.wizard.pane;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import jandl.wizard.Collector;
 import jandl.wizard.WizardBase;
 
-public class FieldPane extends JPanel {
+public class FieldPane extends BasePane {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
 	protected static final long serialVersionUID = WizardBase.serialVersionUID;
 	
@@ -37,6 +37,16 @@ public class FieldPane extends JPanel {
 		}	
 	}
 	
+	@Override
+	public void dumpOn(String tag, Collector collector) {
+		for(int i = 0; i < fieldCount(); i++) {
+			String key = String.format("%s.%s.%s", 
+					tag, this.getName(), getFieldTag(i));
+			String value =  getField(i);
+			collector.put(key, value);
+		}
+	}
+	
 	public int fieldCount() {
 		return lLabel.length;
 	}
@@ -53,7 +63,7 @@ public class FieldPane extends JPanel {
 		return lLabel[i];
 	}
 
-	public String getTag(int i) {
+	public String getFieldTag(int i) {
 		return lLabel[i].getName();
 	}
 
