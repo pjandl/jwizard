@@ -24,9 +24,9 @@ import javax.swing.JScrollPane;
 
 public class WizardBase extends JFrame {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
-	public static final long serialVersionUID = 202103260L;
+	public static final long serialVersionUID = 20210330L;
 	/**
 	* autonumbering
 	*/
@@ -192,7 +192,7 @@ public class WizardBase extends JFrame {
 				}
 				for (Consumer<WizardBase> processor: nextWizard.preProcessorList) {
 					// processor.accept(evt);
-					processor.accept(this);
+					processor.accept(this.nextWizard);
 				}
 				nextWizard.setLocation(this.getLocation());
 				nextWizard.setVisible(true);

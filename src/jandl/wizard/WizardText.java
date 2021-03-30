@@ -1,5 +1,6 @@
 package jandl.wizard;
 
+import java.awt.event.ActionEvent;
 import java.io.Reader;
 
 import javax.swing.BorderFactory;
@@ -8,16 +9,12 @@ import jandl.wizard.pane.TextPane;
 
 public class WizardText extends WizardBase {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
 	public static final long serialVersionUID = WizardBase.serialVersionUID;
 
 	private TextPane textPane;
 	
-	public WizardText(){
-		this("WizardText");
-	}
-
 	public WizardText(String title){
 		this(title, null, true);
 	}
@@ -65,6 +62,14 @@ public class WizardText extends WizardBase {
 
 	public void loadTextFrom(Reader reader) {
 		textPane.loadTextFrom(reader);
+	}
+	
+	@Override
+	protected void bNextClick(ActionEvent evt) {
+		System.out.println("@Override");
+		Data data = Data.instance();
+		textPane.dumpOn(this.getName(), data);
+		super.bNextClick(evt);
 	}
 
 }

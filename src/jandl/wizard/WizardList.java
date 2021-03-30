@@ -12,7 +12,7 @@ import jandl.wizard.pane.ListPane;
 
 public class WizardList extends WizardBase {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
 	public static final long serialVersionUID = WizardBase.serialVersionUID;
 
@@ -30,6 +30,7 @@ public class WizardList extends WizardBase {
 		super(title, imageFile);
 		System.out.println("WizardList.<init>(" + title + ")");
 		listPane = new ListPane<T>(tag, label, list);
+		listPane.setName("listPane0");
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.add(listPane);
@@ -44,12 +45,7 @@ public class WizardList extends WizardBase {
 	protected void bNextClick(ActionEvent evt) {
 		System.out.println("@Override");
 		Data data = Data.instance();
-		String key1 = this.getName() + "." + listPane.getTag() + ".indices" ;
-		int[] index = listPane.getSelectedIndices();
-		data.put(key1, index);
-		String key2 = this.getName() + "." + listPane.getTag() + ".selectedValues" ;
-		String value =  listPane.getSelectedValuesList().toString();
-		data.put(key2, value);
+		listPane.dumpOn(this.getName(), data);
 		super.bNextClick(evt);
 	}
 

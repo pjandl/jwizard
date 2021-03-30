@@ -12,13 +12,13 @@ import jandl.wizard.pane.FieldPane;
 
 public class WizardField extends WizardBase {
 	/**
-	 * serialVersionUID = YYYYMMDDv
+	 * serialVersionUID = YYYYMMDD
 	 */
 	public static final long serialVersionUID = WizardBase.serialVersionUID;
 
 	private FieldPane fieldPane;
 
-	public WizardField( String[] tag, String[] desc){
+	public WizardField(String[] tag, String[] desc){
 		this("WizardField", null, tag, desc, null);
 	}
 
@@ -30,6 +30,7 @@ public class WizardField extends WizardBase {
 		super(title, imageFile);
 		System.out.println("WizardField.<init>(" + title + ")");
 		fieldPane = new FieldPane(tag, label, tip);
+		fieldPane.setName("fieldPane0");
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.add(fieldPane);
@@ -44,11 +45,7 @@ public class WizardField extends WizardBase {
 	protected void bNextClick(ActionEvent evt) {
 		System.out.println("@Override");
 		Data data = Data.instance();
-		for(int i = 0; i < fieldPane.fieldCount(); i++) {
-			String key = this.getName() + "." + fieldPane.getTag(i);
-			String value =  fieldPane.getField(i);
-			data.put(key, value);
-		}
+		fieldPane.dumpOn(this.getName(), data);
 		super.bNextClick(evt);
 	}
 

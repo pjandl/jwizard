@@ -3,7 +3,7 @@ package jandl.wizard;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class Data {
+public class Data implements Collector {
 	private static Data instance;
 
 	private Hashtable<String, Object> table;
