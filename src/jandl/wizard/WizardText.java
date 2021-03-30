@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.io.Reader;
 
 import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
 
 import jandl.wizard.pane.TextPane;
 
@@ -43,9 +44,10 @@ public class WizardText extends WizardBase {
 	private void init() {
 		System.out.println("WizardText.<init>(" + this.getTitle() + ")");
 		textPane = new TextPane();
-		textPane.setBorder(BorderFactory.createCompoundBorder(
+		JScrollPane scrollPane = new JScrollPane(textPane); 
+		scrollPane.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
-		add(textPane, "Center");
+		add(scrollPane, "Center");
 	}
 
 	public void setText(String text) {
