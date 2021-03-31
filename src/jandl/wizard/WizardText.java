@@ -29,49 +29,60 @@ public class WizardText extends WizardBase {
 		init();
 	}
 	
-	public WizardText(String title, String imageFile, String textFile){
-		super(title, imageFile, false);
-		init();
-		textPane.loadTextFrom(textFile);
-	}
-
 	public WizardText(String title, String imageFile, Reader reader){
 		super(title, imageFile, false);
 		init();
-		textPane.loadTextFrom(reader);
+		loadTextFrom(reader);
+	}
+
+	public WizardText(String title, String imageFile, String textFile){
+		super(title, imageFile, false);
+		init();
+		loadTextFrom(textFile);
 	}
 	
+	public void append(String text) {
+		textPane.append(text);
+	}
+
+	@Override
+	protected void bNextClick(ActionEvent evt) {
+		System.out.printf("%s.bNextClick() @Override\n", this.getName());
+		Data data = Data.instance();
+		textPane.dumpOn(this.getName(), data);
+		super.bNextClick(evt);
+	}
+
 	private void init() {
 		System.out.println("WizardText.<init>(" + this.getTitle() + ")");
 		textPane = new TextPane();
+		textPane.setName("textPane0");
 		JScrollPane scrollPane = new JScrollPane(textPane); 
 		scrollPane.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
 		add(scrollPane, "Center");
 	}
-
-	public void setText(String text) {
-		textPane.getInternalJTextArea().setText(text);
-	}
-
-	public void append(String text) {
-		textPane.getInternalJTextArea().append(text);
-	}
 	
-	public void loadTextFrom(String textFile) {
-		textPane.loadTextFrom(textFile);
-	}
-
 	public void loadTextFrom(Reader reader) {
-		textPane.loadTextFrom(reader);
+		try {
+			textPane.loadTextFrom(reader);
+		} catch (RuntimeException e) {
+			textPane.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public void loadTextFrom(String textFile) {
+		try {
+			textPane.loadTextFrom(textFile);
+		} catch (RuntimeException e) {
+			textPane.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
 	}
 	
-	@Override
-	protected void bNextClick(ActionEvent evt) {
-		System.out.println("@Override");
-		Data data = Data.instance();
-		textPane.dumpOn(this.getName(), data);
-		super.bNextClick(evt);
+	public void setText(String text) {
+		textPane.setText(text);
 	}
 
 }

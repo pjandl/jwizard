@@ -18,14 +18,6 @@ public class WizardField extends WizardBase {
 
 	private FieldPane fieldPane;
 
-	public WizardField(String[] tag, String[] desc){
-		this("WizardField", null, tag, desc, null);
-	}
-
-	public WizardField(String title, String[] tag, String[] desc){
-		this(title, null, tag, desc, null);
-	}
-
 	public WizardField(String title, String imageFile, String[] tag, String[] label, String[] tip){
 		super(title, imageFile);
 		System.out.println("WizardField.<init>(" + title + ")");
@@ -41,9 +33,17 @@ public class WizardField extends WizardBase {
 		add(scrollPane, "Center");
 	}
 
+	public WizardField(String title, String[] tag, String[] desc){
+		this(title, null, tag, desc, null);
+	}
+
+	public WizardField(String[] tag, String[] desc){
+		this("WizardField", null, tag, desc, null);
+	}
+
 	@Override
 	protected void bNextClick(ActionEvent evt) {
-		System.out.println("@Override");
+		System.out.printf("%s.bNextClick() @Override\n", this.getName());
 		Data data = Data.instance();
 		fieldPane.dumpOn(this.getName(), data);
 		super.bNextClick(evt);

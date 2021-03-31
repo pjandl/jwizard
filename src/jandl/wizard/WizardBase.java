@@ -7,9 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public class WizardBase extends JFrame {
 	/**
 	 * serialVersionUID = YYYYMMDD
 	 */
-	public static final long serialVersionUID = 20210330L;
+	public static final long serialVersionUID = 20210331L;
 	/**
 	* autonumbering
 	*/
@@ -35,6 +35,7 @@ public class WizardBase extends JFrame {
 
 	private JLabel lImage;
 	private JButton bBack, bNext;
+	private JScrollPane scrollPane;
 	private WizardBase backWizard, nextWizard;
 	private boolean end;
 	private ArrayList<Consumer<WizardBase>> preProcessorList;
@@ -56,23 +57,18 @@ public class WizardBase extends JFrame {
 		super(title);
 		this.setName("Wizard" + (++wizardNumber));
 		System.out.println("WizardBase.<init>(" + title + "), " + this.getName());
-		// Lateral Image
-		if (imageFile == null) {
-			URL url = this.getClass().getResource("/resources/wizard-base.png");
-			lImage = new JLabel(new ImageIcon(url));
-		} else {
-			lImage = new JLabel(new ImageIcon(imageFile));
-		}
-		JScrollPane sp = new JScrollPane(lImage);
+		// Lateral or Center Image
+		this.setImage(imageFile);
+		scrollPane = new JScrollPane(lImage);
 		if (fill) {
-			sp.setBorder(BorderFactory.createCompoundBorder(
+			scrollPane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
-			add(sp, "Center");
+			add(scrollPane, "Center");
 		} else {
-			sp.setBorder(BorderFactory.createCompoundBorder(
+			scrollPane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createEmptyBorder(10, 10, 10, 0), BorderFactory.createEtchedBorder()));
-			sp.setPreferredSize(new Dimension(280, 440));
-			add(sp, "West");
+			scrollPane.setPreferredSize(new Dimension(280, 440));
+			add(scrollPane, "West");
 		}
 		// Botton Button Panel
 		JPanel bbp = new JPanel(new BorderLayout());
@@ -118,6 +114,35 @@ public class WizardBase extends JFrame {
 		postProcessorList = new ArrayList<>();
 	}
 
+	public void addPostProcessor(Consumer<WizardBase> processor) {
+		if (processor != null) {
+			postProcessorList.add(processor);
+		}
+	}
+
+	public void addPreProcessor(Consumer<WizardBase> processor) {
+		if (processor != null) {
+			preProcessorList.add(processor);
+		}
+	}
+
+	public WizardBase backWizard(WizardBase link) {
+		backWizard = link;
+		if (link != null) {
+			link.nextWizard = this;
+			link.bbpLinkCheck();
+		}
+		this.bbpLinkCheck();
+		return this;
+	}
+
+	protected void bBackClick(ActionEvent evt) {
+		System.out.println(this.getName() + ".bBackClick()");
+		backWizard.setLocation(this.getLocation());
+		backWizard.setVisible(true);
+		this.setVisible(false);
+	}
+
 	private void bbpLinkCheck() {
 		bBack.setVisible(backWizard != null);
 		if (this.end) {
@@ -129,62 +154,12 @@ public class WizardBase extends JFrame {
 		}
 	}
 
-	public void setImage(String imageFile) {
-		lImage.setIcon(new ImageIcon(imageFile));
-	}
-
-	public void backWizard(WizardBase link) {
-		backWizard = link;
-		if (link != null) {
-			link.nextWizard = this;
-			link.bbpLinkCheck();
-		}
-		this.bbpLinkCheck();
-	}
-
-	public void nextWizard(WizardBase link) {
-		nextWizard = link;
-		if (link != null) {
-			link.backWizard = this;
-			link.bbpLinkCheck();
-		}
-		end = link == null;
-		this.bbpLinkCheck();
-	}
-
-	public void doBackClick() {
-		bBackClick(null);
-	}
-
-	public void doNextClick() {
-		bNextClick(null);
-	}
-
-	public void addPreProcessor(Consumer<WizardBase> processor) {
-		if (processor != null) {
-			preProcessorList.add(processor);
-		}
-	}
-
-	public void addPostProcessor(Consumer<WizardBase> processor) {
-		if (processor != null) {
-			postProcessorList.add(processor);
-		}
-	}
-
-	protected void bBackClick(ActionEvent evt) {
-		System.out.println(this.getName() + ".bBackClick()");
-		backWizard.setLocation(this.getLocation());
-		backWizard.setVisible(true);
-		this.setVisible(false);
-	}
-
 	protected void bNextClick(ActionEvent evt) {
 		if (end) {
-			System.out.println(this.getName() + ".bNextClick() --> End");
+			System.out.println("WizardBase.bNextClick() --> End");
 			System.exit(0);
 		} else {
-			System.out.println(this.getName() + ".bNextClick()");
+			System.out.println("WizardBase.bNextClick()");
 			try {
 				for (Consumer<WizardBase> processor: this.postProcessorList) {
 					// processor.accept(evt);
@@ -202,6 +177,64 @@ public class WizardBase extends JFrame {
 				Toolkit.getDefaultToolkit().beep();
 			}
 		}
+	}
+
+	public void doBackClick() {
+		bBackClick(null);
+	}
+
+	public void doNextClick() {
+		bNextClick(null);
+	}
+
+	public WizardBase nextWizard(WizardBase link) {
+		nextWizard = link;
+		if (link != null) {
+			link.backWizard = this;
+			link.bbpLinkCheck();
+		}
+		end = link == null;
+		this.bbpLinkCheck();
+		return link;
+	}
+
+	public void setImage(String imageFile) {
+		System.out.println("setImage(" + imageFile + ")");
+		if (imageFile == null) {
+			URL url = this.getClass().getResource("/resources/wizard-base.png");
+			lImage = new JLabel(new ImageIcon(url));
+			if (scrollPane != null) scrollPane.setViewportView(lImage);
+			return;
+		} else if (imageFile.startsWith("!")) {
+			URL url = this.getClass().getResource(imageFile.substring(1));
+			if (url != null) {
+				lImage = new JLabel(new ImageIcon(url));
+				if (scrollPane != null) scrollPane.setViewportView(lImage);
+				return;
+			}
+		} else {
+			File file = new File(imageFile);
+			System.out.println(file + " exists? " + file.exists());
+			try {
+				URL url = new URL("file:"+imageFile);
+				lImage = new JLabel(new ImageIcon(url));
+				if (scrollPane != null) scrollPane.setViewportView(lImage);
+				return;
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//			if (file.exists()) {
+//				lImage = new JLabel(new ImageIcon(imageFile));
+//				if (scrollPane != null) scrollPane.setViewportView(lImage);
+//				return;
+//			}
+		}
+		String msg = String.format("java.io.FileNotFoundException: %s (No such file or directory)",
+				imageFile);
+		lImage = new JLabel(msg);
+		if (scrollPane != null) scrollPane.setViewportView(lImage);
+		System.out.println(msg);
 	}
 
 }

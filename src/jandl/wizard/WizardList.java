@@ -43,7 +43,7 @@ public class WizardList extends WizardBase {
 
 	@Override
 	protected void bNextClick(ActionEvent evt) {
-		System.out.println("@Override");
+		System.out.printf("%s.bNextClick() @Override\n", this.getName());
 		Data data = Data.instance();
 		listPane.dumpOn(this.getName(), data);
 		super.bNextClick(evt);

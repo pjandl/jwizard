@@ -1,5 +1,7 @@
 package jandl;
 
+import java.util.Arrays;
+
 import javax.swing.SwingUtilities;
 
 import jandl.wizard.Data;
@@ -12,19 +14,20 @@ public class WizardDemo0 {
 		// Primeira janela
 		WizardBase wb1 = WizardFactory.createBase("Pagina 01");
 		// Segunda janela
-		WizardBase wb2 = WizardFactory.createText("Pagina 02", "loren-ipsun.txt");
-		wb2.setImage("C:/Users/pjand/Pictures/bulb-crossed-by-pencil.png");
+		WizardBase wb2 = WizardFactory.createText("Pagina 02", "!/resources/loren-ipsun.txt");
+		wb2.setImage("!/resources/tux-c3po.jpg");
 		// terceira janela
 		String[] tag = { "Nome", "SobreNome", "Curso"};
 		String[] label = { "Nome", "Sobrenome", "Curso"};
 		WizardBase wb3 = WizardFactory.createField("Pagina 03", tag, label, label);
-		wb3.setImage("./images/tux-luke-skywalker.png");
+		wb3.setImage("!/resources/tux-darth-maul.jpg");
 		// Quarta janela
 		String[] opcoes = {"Sim", "Talvez", "Nao"};
 		WizardBase wb4 = WizardFactory.createList("Pagina 04", "opt", "Opcoes", opcoes);
+		wb4.setImage("!/resources/tux-darth-vader.jpg");
 		// Quinta janela
 		WizardBase wb5 = WizardFactory.createText("Pagina 05", 
-				"./images/tux-darth-vader.png", true);
+				"!/resources/tux-luke-skywalker.jpg", true);
 		// Encadeamento
 		wb1.nextWizard(wb2);
 		wb2.nextWizard(wb3);
@@ -48,7 +51,9 @@ public class WizardDemo0 {
 		WizardText wizardText = (WizardText)wizard;
 		wizardText.setText("Auto-collected Data\n\n");
 		Data data = Data.instance();
-		for(String k : data.keys()) {
+		String[] key = data.keys().toArray(new String[0]);
+		Arrays.sort(key);
+		for(String k : key) {
 			wizardText.append(String.format("%s = %s\n", k, data.get(k)));
 		}
 	}

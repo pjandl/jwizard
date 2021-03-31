@@ -55,16 +55,16 @@ public class FieldPane extends BasePane {
 		return tfField[i].getText();
 	}
 
-	public JTextField getInternalJTextField(int i) {
-		return tfField[i];
+	public String getFieldTag(int i) {
+		return lLabel[i].getName();
 	}
 
 	public JLabel getInternalJLabel(int i) {
 		return lLabel[i];
 	}
 
-	public String getFieldTag(int i) {
-		return lLabel[i].getName();
+	public JTextField getInternalJTextField(int i) {
+		return tfField[i];
 	}
 
 }

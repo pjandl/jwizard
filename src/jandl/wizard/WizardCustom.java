@@ -32,17 +32,17 @@ public class WizardCustom extends WizardBase {
 		add(scrollPane, "Center");
 	}
 	
+	public <T> void addListPane(String tag, String label, T[] list) {
+		ListPane<T> listPane = new ListPane<>(tag, label, list);
+		listPane.setName("ListPane" + panel.getComponentCount());
+		panel.add(listPane);
+	}
+	
 	public void addTextPane(String textFile) {
 		TextPane textPane = new TextPane();
 		textPane.setName("TextPane" + panel.getComponentCount());
 		textPane.loadTextFrom(textFile);
 		panel.add(textPane);
-	}
-	
-	public <T> void addListPane(String tag, String label, T[] list) {
-		ListPane<T> listPane = new ListPane<>(tag, label, list);
-		listPane.setName("ListPane" + panel.getComponentCount());
-		panel.add(listPane);
 	}
 	
 	public void addVerticalGlue() {
@@ -51,7 +51,7 @@ public class WizardCustom extends WizardBase {
 	
 	@Override
 	protected void bNextClick(ActionEvent evt) {
-		System.out.println("@Override");
+		System.out.printf("%s.bNextClick() @Override\n", this.getName());
 		Data data = Data.instance();
 		System.out.println(panel.getComponentCount());
 		for(int c = 0; c < panel.getComponentCount(); c++) {
