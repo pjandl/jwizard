@@ -25,14 +25,17 @@ import javax.swing.JScrollPane;
 /**
  * Classe base para criação de assistentes, janelas padronizadas que
  * podem ser encadeadas para formar uma aplicações capazes de colher
- * dados do usuário, efetuando seu processamento/tratamento, para
- * realização de tarefas simples.
- * É uma customização da class {@link javax.swing.JFrame} , que oferece um 
- * painel lateral esquerdo para exibição de imagem customizável,
- * uma área central que podem conter um componente de entrada
- * especializado ou uma combinação deles, além de um painel inferior
- * contendo dois botões para navegação para frente e para trás numa
- * sequência encadeável de assistentes.
+ * dados do usuário, efetuar seu processamento/tratamento e, assim,
+ * realizar tarefas simples.
+ * É uma customização da classe {@link javax.swing.JFrame}, que oferece: 
+ * <ol>
+ * <li>um painel lateral esquerdo para exibição de imagem customizável,</li>
+ * <li>uma área central que podem conter um componente de entrada
+ * especializado ou uma combinação deles,</li>
+ * <li> um painel inferior contendo dois botões para navegação para frente
+ * e para trás, que possibilitam criar uma sequência encadeável de 
+ * assistentes.</li>
+ * </ol>
  *
  * @author pjandl
  */
@@ -40,7 +43,7 @@ public class WizardBase extends JFrame {
 	/**
 	 * Número de versão serial único do framework, no formato YYYYMMDD.
 	 */
-	public static final long serialVersionUID = 20210331L;
+	public static final long serialVersionUID = 20210921L;
 	/**
 	* Autonumeração dos assistentes (wizards).
 	*/
@@ -104,7 +107,7 @@ public class WizardBase extends JFrame {
 	 * plataforma em uso.
 	 * 
 	 * @param title título da janela do assistente
-	 * @param imageFile nome do arquivo da imagem lateral.
+	 * @param imageFile nome do arquivo da imagem lateral
 	 */
 	public WizardBase(String title, String imageFile){
 		this(title, imageFile, false);
@@ -118,7 +121,7 @@ public class WizardBase extends JFrame {
 	 * usada preenche toda a janela.
 	 * 
 	 * @param title título da janela do assistente
-	 * @param imageFile nome do arquivo da imagem lateral.
+	 * @param imageFile nome do arquivo da imagem lateral
 	 * @param fill modo de preenchimento: <b>true</b> indica que imagem preenche janela,
 	 *             <b>false</b> indica imagem lateral (30% da janela) 
 	 */
@@ -189,7 +192,7 @@ public class WizardBase extends JFrame {
 	 * seu botão Próximo.
 	 * Não existe pós-processamento para a janela final (última).
 	 * 
-	 * @param processor implementação da interface funcional Consumer<WizardBase>.
+	 * @param processor implementação da interface funcional Consumer<WizardBase>
 	 */
 	public void addPostProcessor(Consumer<WizardBase> processor) {
 		if (processor != null) {
@@ -215,7 +218,7 @@ public class WizardBase extends JFrame {
 	 * Define a janela imediatamente anterior na qual esta janela está encadeada.
 	 * 
 	 * @param link referência para janela anterior
-	 * @return referência para janela anterior, permitindo uso encadeado deste método.
+	 * @return referência para janela anterior, permitindo uso encadeado deste método
 	 */
 	public WizardBase backWizard(WizardBase link) {
 		backWizard = link;
@@ -266,6 +269,7 @@ public class WizardBase extends JFrame {
 	 * <li>reposicionamento e exibição da próxima janela (se registrada);</li>
 	 * <li>encerramento da aplicação se não existe próxima janela registrada.</li>
 	 * </ol>
+	 * 
 	 * @param evt evento gerado pelo processador de eventos Swing
 	 */
 	protected void bNextClick(ActionEvent evt) {
@@ -311,7 +315,7 @@ public class WizardBase extends JFrame {
 	 * Define a janela imediatamente posterior na qual esta janela está encadeada.
 	 * 
 	 * @param link referência para janela posterior
-	 * @return referência para janela posterior, permitindo uso encadeado deste método.
+	 * @return referência para janela posterior, permitindo uso encadeado deste método
 	 */
 	public WizardBase nextWizard(WizardBase link) {
 		nextWizard = link;
@@ -329,7 +333,7 @@ public class WizardBase extends JFrame {
 	 * maiores do que o espaço efetivamente disponível.
 	 *  
 	 * @param imageFile nome do arquivo (pode incluir caminho) correspondente à imagem
-	 * PNG, JPG ou GIF a ser exibida pelo assistente.
+	 * PNG, JPG ou GIF a ser exibida pelo assistente
 	 */
 	public void setImage(String imageFile) {
 		System.out.println("setImage(" + imageFile + ")");
