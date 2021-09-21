@@ -26,7 +26,7 @@ public class FieldPane extends BasePane {
 		tfField = new JTextField[tag.length];
 		for(int i = 0; i < tag.length; i++) {
 			char c = (char)(97+i);
-			lLabel[i] = new JLabel(c + ". " + tip[i]);
+			lLabel[i] = new JLabel(c + ". " + label[i]);
 			lLabel[i].setName(tag[i]);
 			tfField[i] = new JTextField();
 			lLabel[i].setLabelFor(tfField[i]);
