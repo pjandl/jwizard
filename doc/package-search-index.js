@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"jandl"},{"l":"jandl.wizard"},{"l":"jandl.wizard.pane"}];updateSearchResults();
